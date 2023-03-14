@@ -1,7 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { initializeApp } from "firebase/app";
 import "firebase/compat/firestore";
 import firebase from "firebase/compat/app";
+import './App.css';
+import styled from "styled-components"
 
 import { useCollection, useCollectionData } from 'react-firebase-hooks/firestore';
 firebase.initializeApp({
@@ -13,30 +14,37 @@ firebase.initializeApp({
 	appId: process.env.REACT_APP_appId,
 	measurementId: process.env.REACT_APP_measurementId
 });
-
 const firestore = firebase.firestore();
-function App() {
-	return (
-		<div className="App">
 
-			<section>
+const TopDiv = styled.div`
+	background-color: black;
+`;
+
+function App() {
+
+	return (
+		<TopDiv>
+			<div className="App">
+
+
 				{<ChatView />}
-			</section>
-		</div>
+			</div>
+		</TopDiv>
 	)
 }
+let showCnt = 25;
 
 function ChatView() {
 	const dummy = useRef();
 
+	console.log(showCnt);
+
 	const chat = firestore.collection("chat");
-	const query = chat.orderBy('createdAt').limit(25);
+	const query = chat.orderBy('createdAt').limitToLast(showCnt);
 	const [snap] = useCollection(query, { idField: 'id' });
 	const [messages] = useCollectionData(query, { idField: 'id' });
 	const [formValue, setFormValue] = useState('');
 
-
-	// const glssItems = await dataBase.ref('/glass').once('value');
 	const sendMessage = (e) => {
 		e.preventDefault();
 
@@ -48,8 +56,9 @@ function ChatView() {
 
 		setFormValue('');
 		dummy.current.scrollIntoView({ behavior: 'smooth' });
-	}
+	};
 	return (<>
+
 		<main>
 
 			{messages && messages.map((msg, idx) => <ChatMessage key={snap.docs[idx].id} keys={snap.docs[idx].id} message={msg} />)}
@@ -73,16 +82,15 @@ function ChatMessage(props) {
 	const { text } = props.message;
 
 	const messageClass = 'received';
-	const doThis = (id, e) => {
-		e.preventDefault();
-		firestore.collection("chat").doc(id).delete();
+	const deleteChat = (id, e) => {
+		if (e.button === 1) {
+			e.preventDefault();
+			firestore.collection("chat").doc(id).delete();
+		}
 	}
 	return (<>
-		<div className={`message ${messageClass}`} onContextMenu={(e) => doThis(props.keys, e)}  >
-			<p>
-				{text}
-			</p>
-
+		<div className={`message ${messageClass}`} onMouseDown={(e) => deleteChat(props.keys, e)}  >
+			<p>{text}</p>
 		</div>
 	</>)
 }
