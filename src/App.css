@@ -8,7 +8,17 @@
   text-align: left;
   margin: 20px;
 }
+.blanks{
+  height: 30px;
+}
+.Tops{
+  text-align: center;
+  background-color: black;
+  padding: 20px;
+  margin:auto;
+  width: 300px;
 
+}
 
 .black-nav {
   background: rgb(35, 28, 28);
