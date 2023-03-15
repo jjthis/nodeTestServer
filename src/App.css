@@ -7,6 +7,8 @@
 .received{
   text-align: left;
   margin: 20px;
+  margin-top: 0px;
+  padding-top: 10px;
 }
 .blanks{
   height: 30px;
